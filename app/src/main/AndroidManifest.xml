@@ -3,12 +3,7 @@
     package="com.example.jhj.second_work">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- // 인터넷 설정 -->
@@ -19,10 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC7_AFwhUL3b7gTTmc0K_mmdetr_G98AEo" />
 
-        <!-- <meta-data -->
-        <!-- android:name="com.google.android.maps.v2.API_KEY" -->
-        <!-- android:value="AIzaSyApAP1SmHLt5K38Rc2lN-D3z9tgJeFlyKY"/> -->
+        <uses-library android:name="com.google.android.maps" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -31,15 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <!--<meta-data-->
-            <!--android:name="com.google.android.geo.API_KEY"-->
-            <!--android:value="@string/google_maps_key" />-->
-
-        <!--<activity android:name=".Main2Activity" />-->
-        <activity android:name="com.example.jhj.second_work.AddContactActivity" />
+        <activity android:name=".AddContactActivity" />
         <activity android:name=".ContactDetailActivity" />
-        <activity android:name=".EditContactActivity"></activity>
+        <activity android:name=".EditContactActivity" />
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps" />
     </application>
+
 </manifest>

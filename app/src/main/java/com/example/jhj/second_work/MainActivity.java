@@ -2,6 +2,7 @@ package com.example.jhj.second_work;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,9 +15,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -27,10 +30,15 @@ import entities.Contact;
 
 
 public class MainActivity extends AppCompatActivity {
+    // 스레드 음악
+    Button button;
+    SeekBar seekbar;
+    MediaPlayer music;
+
+
     //데이타베이스
     private Button buttonAdd;
     private ListView listViewContents;
-
 
 
     // 웹뷰
@@ -41,6 +49,36 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //음악 스레드
+        music = MediaPlayer.create(this, R.raw.havana);
+        music.setLooping(true);
+
+        button = (Button) findViewById(R.id.button1);
+        seekbar = (SeekBar) findViewById(R.id.seekBar1);
+
+        seekbar.setMax(music.getDuration());
+
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                // TODO Auto-generated method stub
+                if(fromUser)
+                    music.seekTo(progress);
+            }
+        });
+
 
         // 데이타베이스
         this.buttonAdd = findViewById(R.id.buttonAdd);
@@ -66,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
         //탭 추가 코드
         TabHost tabh = (TabHost)findViewById(R.id.tabh);
         tabh.setup();
@@ -81,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
         tabh.addTab(tab2);
         tabh.addTab(tab3);
         tabh.addTab(tab4);
-
 
 
         //webview 코드
@@ -140,6 +175,55 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //음악 스레드
+
+    public void button(View v){
+        if(music.isPlaying()){
+            music.stop();
+            try {
+                music.prepare();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            music.seekTo(0);
+
+            button.setText("시작");
+            seekbar.setProgress(0);
+        }else{
+            music.start();
+            button.setText("멈춤");
+
+            Thread();
+        }
+    }
+
+    public void Thread(){
+        Runnable task = new Runnable(){
+            public void run(){
+                /**
+                 * while문을 돌려서 음악이 실행중일때 게속 돌아가게 합니다
+                 */
+                while(music.isPlaying()){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    /**
+                     * music.getCurrentPosition()은 현재 음악 재생 위치를 가져오는 구문 입니다
+                     */
+                    seekbar.setProgress(music.getCurrentPosition());
+                }
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+
 
 
     //thread 코드
@@ -153,8 +237,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void buttonClick(View view)
-    {
+    public void buttonClick(View view) {
         Runnable runnable = new Runnable() {
             public void run() {
                 Message msg = handler.obtainMessage();
@@ -173,3 +256,4 @@ public class MainActivity extends AppCompatActivity {
         myThread.start();
     }
 }
+
